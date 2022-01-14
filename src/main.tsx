@@ -12,7 +12,7 @@ ReactDOM.render(
     <AppProvider i18n={enTranslations}>
       <ThemeProvider
         theme={{
-          colorScheme: "dark",
+          colorScheme: "light",
         }}
       >
         <App />
