@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Frame, Page } from "@shopify/polaris";
-import axios from "axios";
+import { Frame, Page, EmptyState } from "@shopify/polaris";
+import { AxiosError } from "axios";
 import _ from "lodash";
 import {
   ImageCard,
@@ -10,27 +10,19 @@ import {
   ResponsiveMasonry,
 } from "./components";
 import { useAnimateOnScroll } from "./hooks";
+import { getImages } from "./api";
 import { APP_BANNER } from "./images";
+import { Planet } from "./icons";
 
 // HOC wrap ImageCard and SkeletonCard with a Masonry item
 const MasonryItemImageCard = createMasonryItem("li", ImageCard);
 // use memoized component since the Skeleton will only render once
 const MasonryItemSkeletonCard = createMasonryItem("li", MemoizedSkeletonCard);
 
-type MediaType = "image" | "video";
-
-type ImageProps = {
-  title: string;
-  liked: boolean;
-  explanation: string;
-  media_type: MediaType;
-  url: string;
-  thumbnail_url?: string;
-};
-
 function App() {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const [emptyState, setEmptyState] = useState(false);
   const [bannerHeaderTransform, setBannerHeaderTransform] =
     useState<string>("");
   const [bannerHeaderOpacity, setBannerHeaderOpacity] = useState(1);
@@ -38,17 +30,10 @@ function App() {
   const bannerRef = useRef<HTMLDivElement>(null);
 
   /**
-   * Data fetching hooks
+   * Initial data fetching
    */
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const dataWithLiked = await getImages();
-      setTimeout(() => {
-        setImages([...images, ...dataWithLiked]);
-        setLoading(false);
-      }, 2000); // To address the loading state
-    })();
+    initialLoadImages();
   }, []);
 
   useAnimateOnScroll(handleOnScroll, (timestamp, animationProps) => {
@@ -69,15 +54,31 @@ function App() {
   });
 
   /**
-   * Send request to NASA api
-   * @returns Images array with 'liked' status
+   * Logic for setting loading indicator and send request
    */
-  const getImages = async (): Promise<ImageProps[]> => {
-    const { data } = await axios.get<ImageProps[]>(
-      "https://api.nasa.gov/planetary/apod?api_key=aZs7Z89YLKa1NydBXLjI9DmfbMRwtCLaGTUuDO9O&count=30&thumbs=true"
-    );
-    const dataWithLiked = data.map((item) => ({ ...item, liked: false }));
-    return dataWithLiked;
+  const loadImages = async () => {
+    setLoading(true);
+    const dataWithLiked = await getImages();
+    setTimeout(() => {
+      setImages([...images, ...dataWithLiked]);
+      setLoading(false);
+    }, 2000); // Delay 2 seconds To address the loading state
+  };
+
+  /**
+   * Logic for setting empty state when component mounted and retry
+   */
+  const initialLoadImages = async () => {
+    try {
+      setEmptyState(false); // Always set to false before loading images
+      await loadImages();
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response && err.response.status === 500) {
+        setEmptyState(true); // Show empty state when api fails
+      }
+      setLoading(false);
+    }
   };
 
   /**
@@ -135,19 +136,31 @@ function App() {
   const pageMarkup = (
     <div className="page__wrapper">
       <Page title="Astronomy Picture of the Day">
-        <ResponsiveMasonry>
-          {images.map((img, index) => (
-            <MasonryItemImageCard
-              key={index}
-              {...img}
-              onLike={() => likedImage(index)}
-            />
-          ))}
-          {loading &&
-            Array(10)
-              .fill(null)
-              .map((item, index) => <MasonryItemSkeletonCard key={index} />)}
-        </ResponsiveMasonry>
+        {emptyState ? (
+          <EmptyState
+            heading="Oops, the space is too crowded~"
+            action={{
+              content: "Try Again",
+              onAction: () => initialLoadImages(),
+            }}
+            image={Planet}
+            fullWidth
+          />
+        ) : (
+          <ResponsiveMasonry>
+            {images.map((img, index) => (
+              <MasonryItemImageCard
+                key={index}
+                {...img}
+                onLike={() => likedImage(index)}
+              />
+            ))}
+            {loading &&
+              Array(10)
+                .fill(null)
+                .map((item, index) => <MasonryItemSkeletonCard key={index} />)}
+          </ResponsiveMasonry>
+        )}
       </Page>
     </div>
   );
