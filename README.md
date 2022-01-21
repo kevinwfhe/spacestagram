@@ -6,7 +6,7 @@ The project uses the [Polaris](https://polaris.shopify.com/components/get-starte
 
 There is also a dark mode for you to enjoy the astonishing universe. Buttons are on the top-right conner for you to change between the light and dark mode.
 
-The project use Vite to build and Docker to deploy.
+The project use Vite to build and Docker to deploy, and Jest and React Testing Library to test.
 
 To preview on local environment:
 
@@ -20,4 +20,9 @@ npm build
 then
 ```
 npm run preview
+```
+
+To run test:
+```
+npm run test
 ```
