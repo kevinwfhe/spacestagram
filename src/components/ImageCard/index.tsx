@@ -1,8 +1,6 @@
 import { MediaCard, VideoThumbnail } from "@shopify/polaris";
 import { LikeIcon } from "..";
 
-type MediaType = "image" | "video";
-
 export type ImageCardProps = {
   title: string;
   liked: boolean;
