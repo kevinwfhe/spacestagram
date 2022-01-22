@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 type AnimationProps = {
   [key: string]: any;
@@ -10,9 +10,9 @@ type AnimationProps = {
  * @animateCallback the callback be used inside rAF, takes in the
  * timestamp from rAF and animation properties returned from onScroll
  */
-export const useAnimateOnScroll = (
+const useAnimateOnScroll = (
   onScroll: (e: Event) => AnimationProps,
-  animateCallback: (timestamp: number, animationProps: AnimationProps) => void
+  animateCallback: (timestamp: number, animationProps: AnimationProps) => void,
 ) => {
   const tickingRef = useRef(false); // recording if a tick is scheduled
 
@@ -21,7 +21,8 @@ export const useAnimateOnScroll = (
    * @param animationProps properties that will be used to calculate the animation
    */
   const requestTick = (animationProps: AnimationProps) => {
-    if (!tickingRef.current) { // request a frame if no tick is scheduled
+    if (!tickingRef.current) {
+      // request a frame if no tick is scheduled
       requestAnimationFrame((timestamp) => {
         animateCallback(timestamp, animationProps);
         tickingRef.current = false; // reset tickingRef after the animation is finished
@@ -42,7 +43,9 @@ export const useAnimateOnScroll = (
 
   // add scroll event listener when the component mounted
   useEffect(() => {
-    window.addEventListener("scroll", animateOnScroll);
-    return () => window.removeEventListener("scroll", animateOnScroll);
+    window.addEventListener('scroll', animateOnScroll);
+    return () => window.removeEventListener('scroll', animateOnScroll);
   }, []);
 };
+
+export default useAnimateOnScroll;

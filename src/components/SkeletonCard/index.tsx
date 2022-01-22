@@ -1,19 +1,19 @@
-import { memo } from "react";
+import React, { memo } from 'react';
 import {
   Card,
   SkeletonBodyText,
   SkeletonDisplayText,
   SkeletonThumbnail,
-} from "@shopify/polaris";
-import random from "lodash/random";
+} from '@shopify/polaris';
+import random from 'lodash/random';
 
 type SkeletonCardProps = {
   height?: string | number;
 };
 
-export const SkeletonCard = ({
+export function SkeletonCard({
   height = random(600, 1000),
-}: SkeletonCardProps) => {
+}: SkeletonCardProps) {
   return (
     <div className="skeletonCard__wrapper" style={{ height }}>
       <Card>
@@ -24,6 +24,6 @@ export const SkeletonCard = ({
       </Card>
     </div>
   );
-};
+}
 
 export const MemoizedSkeletonCard = memo(SkeletonCard);

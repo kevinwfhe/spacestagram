@@ -1,57 +1,32 @@
-import { useEffect, useRef, useState } from "react";
-import { Frame, Page, EmptyState } from "@shopify/polaris";
-import { AxiosError } from "axios";
-import _ from "lodash";
+import React, { useEffect, useRef, useState } from 'react';
+import { Frame, Page, EmptyState } from '@shopify/polaris';
+import { AxiosError } from 'axios';
 import {
   ImageCard,
   TopBar,
   MemoizedSkeletonCard,
   createMasonryItem,
   ResponsiveMasonry,
-} from "./components";
-import { useAnimateOnScroll } from "./hooks";
-import { getImages } from "./api";
-import { APP_BANNER } from "./images";
-import { Planet } from "./icons";
+} from './components';
+import { useAnimateOnScroll } from './hooks';
+import { getImages } from './api';
+import { APP_BANNER } from './images';
+import { Planet } from './icons';
 
 // HOC wrap ImageCard and SkeletonCard with a Masonry item
-const MasonryItemImageCard = createMasonryItem("li", ImageCard);
+const MasonryItemImageCard = createMasonryItem('li', ImageCard);
 // use memoized component since the Skeleton will only render once
-const MasonryItemSkeletonCard = createMasonryItem("li", MemoizedSkeletonCard);
+const MasonryItemSkeletonCard = createMasonryItem('li', MemoizedSkeletonCard);
 
 function App() {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [emptyState, setEmptyState] = useState(false);
   const [bannerHeaderTransform, setBannerHeaderTransform] =
-    useState<string>("");
+    useState<string>('');
   const [bannerHeaderOpacity, setBannerHeaderOpacity] = useState(1);
   const [showTopbarSubtitle, setShowTopbarSubtitle] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * Initial data fetching
-   */
-  useEffect(() => {
-    initialLoadImages();
-  }, []);
-
-  useAnimateOnScroll(handleOnScroll, (timestamp, animationProps) => {
-    if (animationProps) {
-      const { bannerOutPercentage, bannerHeight } = animationProps;
-      // modify the transform property and opacity of the banner header
-      setBannerHeaderTransform(
-        `translateY(${bannerOutPercentage * 0.4 * bannerHeight}px) scale(${
-          bannerOutPercentage > 0.2 ? -0.5 * bannerOutPercentage + 1.1 : 1
-        })`
-      );
-      setBannerHeaderOpacity(
-        bannerOutPercentage > 0.6 ? -2.5 * bannerOutPercentage + 2.5 : 1
-      );
-      // set the classname of topbar subtitle
-      setShowTopbarSubtitle(bannerOutPercentage > 0.8);
-    }
-  });
 
   /**
    * Logic for setting loading indicator and send request
@@ -82,11 +57,17 @@ function App() {
   };
 
   /**
+   * Initial data fetching
+   */
+  useEffect(() => {
+    initialLoadImages();
+  }, []);
+  /**
    * Scroll event handler
    * @param e Scroll event
    * @returns The dimension properties used in the animations
    */
-  function handleOnScroll(e: Event): { [key: string]: any } | void {
+  function handleOnScroll(): { [key: string]: any } | undefined {
     const rect = bannerRef?.current?.getBoundingClientRect();
     if (rect) {
       const { bottom, height } = rect;
@@ -99,7 +80,25 @@ function App() {
         bannerHeight: height,
       };
     }
+    return undefined
   }
+
+  useAnimateOnScroll(handleOnScroll, (timestamp, animationProps) => {
+    if (animationProps) {
+      const { bannerOutPercentage, bannerHeight } = animationProps;
+      // modify the transform property and opacity of the banner header
+      setBannerHeaderTransform(
+        `translateY(${bannerOutPercentage * 0.4 * bannerHeight}px) scale(${
+          bannerOutPercentage > 0.2 ? -0.5 * bannerOutPercentage + 1.1 : 1
+        })`,
+      );
+      setBannerHeaderOpacity(
+        bannerOutPercentage > 0.6 ? -2.5 * bannerOutPercentage + 2.5 : 1,
+      );
+      // set the classname of topbar subtitle
+      setShowTopbarSubtitle(bannerOutPercentage > 0.8);
+    }
+  });
 
   /**
    * Like or Unlike the Image
@@ -113,8 +112,8 @@ function App() {
 
   const topbarMarkup = (
     <TopBar
-      title={"spacestagram"}
-      subtitle={"Image-sharing From The Final Frontier"}
+      title="spacestagram"
+      subtitle="Image-sharing From The Final Frontier"
       showSubtitle={showTopbarSubtitle}
     />
   );
@@ -140,7 +139,7 @@ function App() {
           <EmptyState
             heading="Oops, the space is too crowded~"
             action={{
-              content: "Try Again",
+              content: 'Try Again',
               onAction: () => initialLoadImages(),
             }}
             image={Planet}
@@ -150,7 +149,7 @@ function App() {
           <ResponsiveMasonry>
             {images.map((img, index) => (
               <MasonryItemImageCard
-                key={index}
+                key={img.url}
                 {...img}
                 onLike={() => likedImage(index)}
               />

@@ -1,5 +1,7 @@
-import { MediaCard, VideoThumbnail } from "@shopify/polaris";
-import { LikeIcon } from "..";
+/* eslint-disable camelcase */
+import React from 'react';
+import { MediaCard, VideoThumbnail } from '@shopify/polaris';
+import { LikeIcon } from '..';
 
 export type ImageCardProps = {
   title: string;
@@ -11,7 +13,7 @@ export type ImageCardProps = {
   thumbnail_url?: string;
 };
 
-export const ImageCard = ({
+export default function ImageCard({
   title,
   liked,
   explanation,
@@ -19,27 +21,27 @@ export const ImageCard = ({
   url,
   onLike,
   thumbnail_url,
-}: ImageCardProps) => {
+}: ImageCardProps) {
   return (
     <MediaCard
       title={title}
       primaryAction={{
-        content: liked ? "Unlike" : "Like",
+        content: liked ? 'Unlike' : 'Like',
         onAction: () => onLike(),
         icon: () => <LikeIcon liked={liked} />,
       }}
       description={explanation}
       portrait
     >
-      {media_type === "image" ? (
+      {media_type === 'image' ? (
         <img
           alt={explanation}
           title={title}
           width="100%"
           height="100%"
           style={{
-            objectFit: "cover",
-            objectPosition: "center",
+            objectFit: 'cover',
+            objectPosition: 'center',
           }}
           src={url}
         />
@@ -51,4 +53,4 @@ export const ImageCard = ({
       )}
     </MediaCard>
   );
-};
+}

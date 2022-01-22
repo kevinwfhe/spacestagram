@@ -1,5 +1,6 @@
-import React, { ReactNode } from "react";
-import Masonry from "react-masonry-component";
+/* eslint-disable react/require-default-props */
+import React, { ReactNode } from 'react';
+import Masonry from 'react-masonry-component';
 
 type MasonryOptions = {
   className?: string;
@@ -15,34 +16,33 @@ type ResponsiveMasonryProps = MasonryOptions & {
 };
 
 const DEFAULT_MASONRY_OPTIONS = {
-  className: "masonry",
-  elementType: "ul",
+  className: 'masonry',
+  elementType: 'ul',
   options: {
-    itemSelector: ".masonry__item",
-    columnWidth: ".masonry__item",
+    itemSelector: '.masonry__item',
+    columnWidth: '.masonry__item',
   },
 };
 
-export const ResponsiveMasonry = ({
+export function ResponsiveMasonry({
   children,
   ...masonryOptions
-}: React.PropsWithChildren<ResponsiveMasonryProps>) => {
+}: React.PropsWithChildren<ResponsiveMasonryProps>) {
   const mergedMasonryOptions = {
     ...DEFAULT_MASONRY_OPTIONS,
     ...masonryOptions,
   };
   return <Masonry {...mergedMasonryOptions}>{children}</Masonry>;
-};
+}
 
-export const createMasonryItem =
-  <P extends object>(
-    elementType: string,
-    ItemComponent: React.ComponentType<P>
-  ) =>
-  (props: { [key: string]: any }) => {
+export const createMasonryItem = <P extends object>(
+  elementType: string,
+  ItemComponent: React.ComponentType<P>,
+) =>
+  function (props: { [key: string]: any }) {
     return React.createElement(
       elementType,
-      { className: "masonry__item" },
-      <ItemComponent {...(props as P)} />
+      { className: 'masonry__item' },
+      <ItemComponent {...(props as P)} />,
     );
   };

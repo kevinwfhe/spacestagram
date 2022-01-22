@@ -1,1 +1,1 @@
-export { useAnimateOnScroll } from "./useAnimateOnScroll";
+export { default as useAnimateOnScroll } from "./useAnimateOnScroll";

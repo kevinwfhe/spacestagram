@@ -1,1 +1,1 @@
-export { getImages } from "./getImages";
+export { default as getImages } from './getImages';
