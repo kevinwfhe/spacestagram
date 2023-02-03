@@ -1,6 +1,6 @@
 # Spacestagram - Image-sharing from The Final Frontier
 
-This project displays images from the [NASA's API APOD](https://github.com/nasa/apod-api#docs). It is hosted on [GitHub pages Spacestagram](https://kevinhe-7755.github.io/spacestagram/).
+This project displays images from the [NASA's API APOD](https://github.com/nasa/apod-api#docs). It is hosted on [GitHub pages Spacestagram](https://kevinwfhe.github.io/spacestagram/).
 
 The project uses the [Polaris](https://polaris.shopify.com/components/get-started) as the component library, and the images are loaded in a masonry layout which adopts [react-masonry-component](https://github.com/eiriklv/react-masonry-component).
 
